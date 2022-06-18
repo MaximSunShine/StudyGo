@@ -25,7 +25,7 @@ func main() {
 	}
 	go func() {
 		wg.Wait()
-		close(ch)
+		//close(ch)
 	}()
 	sum := 0
 	for i, _ := range A {
