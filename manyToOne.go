@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/rand"
 	"sync"
@@ -20,24 +21,30 @@ func workTime(stop, echo chan struct{}, wg *sync.WaitGroup) {
 	}
 }
 
-func doTick(stop, echo chan struct{}, wg *sync.WaitGroup) {
+func doTick(stop, echo chan struct{}, wg *sync.WaitGroup, num int) {
 	defer wg.Done()
-	t := time.NewTicker(time.Millisecond * 200)
+	t := time.NewTicker(time.Millisecond * 199)
 	for {
 		select {
 		case <-t.C:
 			fmt.Println("do tick")
+
+			wg1 := new(sync.WaitGroup)
 			f := func() {
-				n := rand.Intn(1) + 1
+				defer wg1.Done()
+				n := rand.Intn(num)
 				fmt.Println(n)
-				if n == 1 {
+				if n == 0 {
 					fmt.Println("Max is found")
 					echo <- struct{}{}
 				}
 			}
 
+			wg1.Add(3)
 			go f()
 			go f()
+			go f()
+			wg1.Wait()
 
 		case <-stop:
 			fmt.Println("stop Ticker")
@@ -59,14 +66,15 @@ func listen(stop, echo chan struct{}) {
 }
 
 func main() {
-
+	num := flag.Int("n", 2, "Предел случайных чисел от 0 до n-1")
+	flag.Parse()
 	wg := new(sync.WaitGroup)
 
 	stop := make(chan struct{})
 	echo := make(chan struct{})
 	wg.Add(2)
 	go workTime(stop, echo, wg)
-	go doTick(stop, echo, wg)
+	go doTick(stop, echo, wg, *num)
 	go listen(stop, echo)
 
 	ch := make(chan struct{})
