@@ -1,6 +1,7 @@
 package apiserver
 
 import (
+	"github.com/GS/http-rest-api/internal/app/store"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -12,6 +13,7 @@ type APIServer struct {
 	config *Config        //(struct)
 	logger *logrus.Logger //(struct)объявляем поле типа структура Logger с большим кол параметров и методов для логирования
 	router *mux.Router    // объявляем роутер
+	store  *store.Store
 }
 
 // New создаем переменную типа структура и возвращаем ее параметром возврата фн
@@ -29,7 +31,12 @@ func (aps *APIServer) Start() error {
 	if err := aps.configureLogger(); err != nil {
 		return err
 	} //конфигурируем логгер
-	aps.configureRouter()                  // конфигурируем роутер
+	aps.configureRouter() // конфигурируем роутер
+
+	if err := aps.configureStore(); err != nil {
+		return err
+	}
+
 	aps.logger.Info("starting api server") //записываем в лог текстовую информацию
 	// запускаем сервер на прослушивание урл адресов с нужного порта
 	return http.ListenAndServe(aps.config.BindAddr, aps.router)
@@ -68,6 +75,17 @@ func (aps *APIServer) configureLogger() error {
 func (aps *APIServer) configureRouter() {
 	//привязваем конкретный урл адрес к определенному адресу
 	aps.router.HandleFunc("/hello", aps.handleHello())
+}
+
+func (aps *APIServer) configureStore() error {
+	st := store.NewStore(aps.config.Store)
+	if err := st.Open(); err != nil {
+		aps.logger.Info(err) //
+		return err
+	}
+	aps.store = st
+	return nil
+
 }
 
 // handleHello проводим замыкание фн хэндлера (ServeHTTP) с
