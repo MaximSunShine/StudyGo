@@ -1,0 +1,107 @@
+@startuml
+package main <<Node>>{
+
+component init [
+func init()
+]
+component main [
+func main()
+]
+init --> main
+}
+
+
+
+package apiserver <<Node>>{
+struct Config {
+    --public fields--
+	+ BindAddr string
+	+ LogLevel string
+	+ {field} Store *store.ConfigStore
+}
+struct APIServer {
+    --private fields--
+	{field} - config *Config
+	{field} - logger *logrus.Logger
+	{field} - router *mux.Router
+	{field} - store  *store.Store
+	--public methods--
+	{method} +Start() "func (aps *APIServer) Start() error"
+	--private methods--
+	{method} -configureLogger() "func (aps *APIServer) configureLogger() error"
+	{method} -configureRouter "func (aps *APIServer) configureRouter()"
+	{method} -configureStore "func (aps *APIServer) configureStore()"
+	{method} -handleHello "func (aps *APIServer) handleHello() http.HandlerFunc"
+}
+Config -> APIServer::config
+
+component NewConfigAPIServer [
+func NewConfig() *Config
+]
+
+component NewAPIServer [
+func New(cf *Config) *APIServer
+]
+
+NewConfigAPIServer --> Config : configuration
+NewAPIServer --*APIServer : configuration
+
+}
+
+main -->  NewConfigAPIServer : вызов фн
+main --> NewAPIServer : вызов фн
+
+package model <<Node>>{
+ struct User{
+    --public fields--
+	+ ID int
+	+ Email string
+	+ EncryptedPassword string
+}
+}
+package store <<Node>>{
+struct Store{
+    --private fields--
+	{field} - config *ConfigStore
+	{field} - db *sql.DB
+	{field} - userRepository *UserRepository
+	--public methods--
+	{field} + Open() func (s *Store) Open() error
+	{field} + Close() func (s *Store) Close()
+	{field} + User() func (s *Store) User() *UserRepository
+}
+struct ConfigStore{
+--public fields--
+	+ DatabaseUrl string
+}
+struct UserRepository{
+    --private fields--
+	- store *Store
+	--public methods--
+	{field} + Create() func (r *UserRepository) Create(u *model.User) (*model.User, error)
+	{field} + FindByEmail() func (r *UserRepository) FindByEmail(email string) (*model.User, error)
+}
+ConfigStore --> Store::config
+Store::userRepository <-- UserRepository
+Store::User <-- UserRepository
+
+component NewStore [
+func NewStore(config *ConfigStore) *Store]
+NewStore --> Store
+component NewConfig [
+func NewConfig() *ConfigStore]
+NewConfig --> ConfigStore
+}
+
+Store <- UserRepository::store
+User -> UserRepository::Create
+User -> UserRepository::FindByEmail
+Store --> APIServer::store
+
+package store_test <<Node>>{
+}
+
+
+
+
+@enduml

@@ -1,16 +1,19 @@
 package store
 
-import "github.com/GS/http-rest-api/internal/app/model"
+import (
+	"github.com/GS/http-rest-api/internal/app/model"
+)
 
 // UserRepository создаем структуру UserRepository которая будет полем структуры Store(основаная структура БД)
 // к объкту UserRepository мы будем обращаться через метод Store.User.{...}, так как его имя с маленькой буквы и мы при
 // объявлении новой структуры Store не будем его видеть через . !
 // У каждой таблици будет своя структура и свой доп объект выполнения разных команд к таблице посредством методов объекта
-// а обращаться мы к объекту будем через метот главной структуры БД именованной именем конкретной таблицы
+// а обращаться мы к объекту будем через метод главной структуры БД именованной именем конкретной таблицы
 type UserRepository struct {
 	store *Store
 }
 
+// Create запись добавление новых записей в таблицу
 func (r *UserRepository) Create(u *model.User) (*model.User, error) {
 	if err := r.store.db.QueryRow(
 		"INSERT INTO users (email, encrypted_password) VALUES ($1,$2) RETURNING id",
@@ -22,6 +25,7 @@ func (r *UserRepository) Create(u *model.User) (*model.User, error) {
 	return u, nil
 }
 
+// FindByEmail поиск строки в таблице по емэйлу и возвращам структуру заполненную найденными данными из строки
 func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	u := &model.User{}
 	if err := r.store.db.QueryRow(
@@ -36,4 +40,5 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	}
 
 	return u, nil
+
 }
