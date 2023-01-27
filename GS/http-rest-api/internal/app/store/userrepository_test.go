@@ -12,9 +12,7 @@ func TestUserRepository_Create(t *testing.T) {
 	s, teardown := store.TestStore(t, databaseURL) //создаем БД и получаем структуру и фн удаление таблиц с бд
 	defer teardown("users")                        // удаление таблицы
 
-	u, err := s.User().Create(&model.User{ // добавление строки в таблицу
-		Email: "user@example.org",
-	})
+	u, err := s.User().Create(model.TestUser(t))
 	assert.NoError(t, err) // проверка ошибки
 	assert.NotNil(t, u)    // проверка наличия заполненной структуры
 }
@@ -25,13 +23,14 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	defer teardown("users")                        // удаление таблицы
 
 	email := "user@example.org"
-	u, err := s.User().FindByEmail(email) //Поиск строки по емэйлу
+	_, err := s.User().FindByEmail(email) //Поиск строки по емэйлу
 	assert.Error(t, err)
 
-	u, err = s.User().Create(&model.User{ //создаем струку с искомым емэйлом и проверяем ее поиск
-		Email: "user@example.org",
-	})
-	u, err = s.User().FindByEmail(email) //поиск должен завершиться удачно
+	u := model.TestUser(t) //создаем тестового пользователя
+	u.Email = email
+	s.User().Create(u) //добавляем в его в таблицу
+
+	u, err = s.User().FindByEmail(email) //находим пользователя по емэйлу и возвращаем
 	assert.NoError(t, err)
 	assert.NotNil(t, u)
 }
