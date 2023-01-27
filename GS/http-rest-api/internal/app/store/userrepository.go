@@ -15,6 +15,15 @@ type UserRepository struct {
 
 // Create запись добавление новых записей в таблицу
 func (r *UserRepository) Create(u *model.User) (*model.User, error) {
+	// Проверка на достоверность данных
+	if err := u.Validate(); err != nil {
+		return nil, err
+	}
+	// если хэш пароль создался удачно, продолжаем
+	if err := u.BeforeCreate(); err != nil {
+		return nil, err
+	}
+	//добавляем строку
 	if err := r.store.db.QueryRow(
 		"INSERT INTO users (email, encrypted_password) VALUES ($1,$2) RETURNING id",
 		u.Email,
