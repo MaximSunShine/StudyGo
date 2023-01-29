@@ -1,19 +1,45 @@
 package apiserver
 
 import (
-	"github.com/GS/http-rest-api/internal/app/store"
-	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
-	"io"
+	"database/sql"
+	"github.com/GS/http-rest-api/internal/app/store/sqlstore"
 	"net/http"
 )
 
+// Start подключение к БД, и запуск роутера со всеми оставшимися конфигурациями
+func Start(config *Config) error {
+	db, err := newDB(config.DatabaseURL) //подключение к БД и тест/пинг ее работы
+	if err != nil {
+		return err
+	}
+
+	defer db.Close() // закрыть подключение после завершения работы роутера
+	store := sqlstore.NewStore(db)
+	srv := newServer(store) // создаем структуру для работы с БД
+
+	return http.ListenAndServe(config.BindAddr, srv) // запуск сервера
+}
+
+func newDB(databaseURL string) (*sql.DB, error) {
+	db, err := sql.Open("pgx", databaseURL) // подключаемся к БД и возвращаем структуру БД
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, err
+	} // проверка подключения к БД на плучение строки
+
+	return db, nil
+}
+
+/*
 // APIServer объявлеие структуры
 type APIServer struct {
 	config *Config        //(struct)
 	logger *logrus.Logger //(struct)объявляем поле типа структура Logger с большим кол параметров и методов для логирования
 	router *mux.Router    // объявляем роутер
-	store  *store.Store
+	store  *sqlstore.Store
 }
 
 // New создаем переменную типа структура и возвращаем ее параметром возврата фн
@@ -44,24 +70,27 @@ func (aps *APIServer) Start() error {
 
 // configureLogger настраиваем логгер
 func (aps *APIServer) configureLogger() error {
-	/*	func ParseLevel(lvl string) (Level, error) {
-		switch strings.ToLower(lvl) {
-		case "panic":
-			return PanicLevel, nil
-		case "fatal":
-			return FatalLevel, nil
-		case "error":
-			return ErrorLevel, nil
-		case "warn", "warning":
-			return WarnLevel, nil
-		case "info":
-			return InfoLevel, nil
-		case "debug":
-			return DebugLevel, nil
-		case "trace":
-			return TraceLevel, nil
-		}
-	*/                                                   //ParseLevel
+*/
+/*	func ParseLevel(lvl string) (Level, error) {
+
+	switch strings.ToLower(lvl) {
+	case "panic":
+		return PanicLevel, nil
+	case "fatal":
+		return FatalLevel, nil
+	case "error":
+		return ErrorLevel, nil
+	case "warn", "warning":
+		return WarnLevel, nil
+	case "info":
+		return InfoLevel, nil
+	case "debug":
+		return DebugLevel, nil
+	case "trace":
+		return TraceLevel, nil
+	}
+*/
+/*//ParseLevel
 	level, err := logrus.ParseLevel(aps.config.LogLevel) // считваем код типа обработки ("error","debug")?
 	if err != nil {
 		return err
@@ -78,7 +107,7 @@ func (aps *APIServer) configureRouter() {
 }
 
 func (aps *APIServer) configureStore() error {
-	st := store.NewStore(aps.config.Store)
+	st := sqlstore.NewStore(aps.config.Store)
 	if err := st.Open(); err != nil {
 		aps.logger.Info(err) //
 		return err
@@ -99,3 +128,4 @@ func (aps *APIServer) handleHello() http.HandlerFunc {
 		}
 	}
 }
+*/

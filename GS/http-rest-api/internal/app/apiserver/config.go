@@ -1,19 +1,19 @@
 package apiserver
 
-import "github.com/GS/http-rest-api/internal/app/store"
-
 // Config объявление структуры
 type Config struct {
-	BindAddr string             `toml:"bind_addr"`
-	LogLevel string             `toml:"log_level"`
-	Store    *store.ConfigStore `toml:"Store"`
+	BindAddr    string `toml:"bind_addr"`
+	LogLevel    string `toml:"log_level"`
+	DatabaseURL string `toml:"database_url"`
+	//Store    *store.ConfigStore `toml:"Store"`
 }
 
 // NewConfig иннициализация структуры
 func NewConfig() *Config {
 	return &Config{
-		BindAddr: ":8000",
-		LogLevel: "error",
-		Store:    store.NewConfig(),
+		BindAddr:    ":8000",
+		LogLevel:    "error",
+		DatabaseURL: "host=localhost port=5432 user=postgres password=domcrat dbname=restapi_dev sslmode=disable",
+		//Store:    store.NewConfig(),
 	}
 }

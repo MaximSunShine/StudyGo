@@ -8,10 +8,11 @@ import (
 
 func TestUser_Validate(t *testing.T) {
 
+	//создаем массив проверяемых структур в тестировании
 	testCases := []struct {
-		name    string
-		u       func() *model.User
-		isValid bool
+		name    string             // имя проверки
+		u       func() *model.User // данные пользователя
+		isValid bool               // верные/ не верные
 	}{
 		{
 			name: "valid",

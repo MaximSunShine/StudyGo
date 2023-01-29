@@ -17,15 +17,15 @@ func init() {
 func main() {
 	flag.Parse()
 
-	cnf := apiserver.NewConfig() //возвращаем структуру Config
+	cnf := apiserver.NewConfig() //возвращаем структуру Config, предварительно иннициадизируем структуру данными
 	// заполняем структуру Config данными из файла адрес которого заполнен значением по умолчанию
 	_, err := toml.DecodeFile(configPath, cnf) // читаем из файла значения полей (аналогия с джейсоном)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err) // не удалось прочитать данные с файла
 	}
-	api := apiserver.New(cnf) // заполняем поле структуры APIServer новыми значением структурой Config
-	if err := api.Start(); err != nil {
+	// заполняем поле структуры APIServer новыми значением: структурой Config
+	if err := apiserver.Start(cnf); err != nil {
 		log.Fatal(err)
 	}
 }

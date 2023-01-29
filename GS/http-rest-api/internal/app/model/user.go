@@ -16,8 +16,9 @@ type User struct { // создаем аналогию таблицы базы д
 // Validate проверка на соответсвие заполнения емэйла и пароля по общепринятым соглашениям
 func (u *User) Validate() error {
 	return val.ValidateStruct(
-		u,                                           //передаем нужную структуру
-		val.Field(&u.Email, val.Required, is.Email), //проверка поля емэйл - не пустое - соотвествует емейлу
+		u, //передаем нужную структуру
+		//проверка поля емэйл - не пустое - соотвествует емейлу
+		val.Field(&u.Email, val.Required, is.Email),
 		//прописываем правило в зависимости от значения поля password, это правило возаращает фн requiredIf(bool)
 		val.Field(&u.Password, val.By(requiredIf(u.EncryptedPassword == "")), val.Length(6, 100)), // проверка поля пароль - не пустое - больше 6 символов и  меньше 100
 	)

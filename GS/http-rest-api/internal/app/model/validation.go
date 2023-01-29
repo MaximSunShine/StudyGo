@@ -7,9 +7,8 @@ func requiredIf(cond bool) validation.RuleFunc {
 
 	return func(value interface{}) error {
 		if cond {
-			//проверка value на не пустое
 			return validation.Validate(value, validation.Required)
-		}
+		} //проверка value на не пустое
 		return nil
 	}
 }
