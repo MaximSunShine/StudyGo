@@ -7,10 +7,10 @@ import (
 )
 
 type User struct { // создаем аналогию таблицы базы данных
-	ID                int
-	Email             string
-	Password          string
-	EncryptedPassword string
+	ID                int    `json:"id"`
+	Email             string `json:"email"`
+	Password          string `json:"password,omitempty"`
+	EncryptedPassword string `json:"-"`
 }
 
 // Validate проверка на соответсвие заполнения емэйла и пароля по общепринятым соглашениям
@@ -36,8 +36,16 @@ func (u *User) BeforeCreate() error {
 	return nil
 }
 
+func (u *User) Sanitaze() {
+	u.Password = "" // удаляем пароль
+}
+
+func (u *User) ComparePassword(password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(u.EncryptedPassword), []byte(password)) == nil
+}
+
 func encriptString(s string) (string, error) {
-	b, err := bcrypt.GenerateFromPassword([]byte(s), bcrypt.MinCost) // генерируем хэш
+	b, err := bcrypt.GenerateFromPassword([]byte(s), bcrypt.MinCost) // генерируем хэш из пароля
 	if err != nil {
 		return "", err
 	}
