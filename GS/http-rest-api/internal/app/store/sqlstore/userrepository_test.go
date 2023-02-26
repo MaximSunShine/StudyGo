@@ -19,6 +19,19 @@ func TestUserRepository_Create(t *testing.T) {
 	assert.NotNil(t, u)                   // проверка наличия заполненной структуры
 }
 
+func TestUserRepository_Find(t *testing.T) {
+	db, teardown := sqlstore.TestDB(t, databaseURL) //создаем БД и получаем структуру и фн удаление таблиц с бд
+	defer teardown("users")                         // удаление таблицы
+
+	s := sqlstore.NewStore(db)
+	u1 := model.TestUser(t) //создаем тестового пользователя
+	s.User().Create(u1)     //добавляем в его в таблицу
+
+	u2, err := s.User().Find(u1.ID) //находим пользователя по емэйлу и возвращаем
+	assert.NoError(t, err)
+	assert.NotNil(t, u2)
+}
+
 // Поиск строки по емэйлу
 func TestUserRepository_FindByEmail(t *testing.T) {
 	db, teardown := sqlstore.TestDB(t, databaseURL) //создаем БД и получаем структуру и фн удаление таблиц с бд
