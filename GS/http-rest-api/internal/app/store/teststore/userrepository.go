@@ -7,7 +7,7 @@ import (
 
 type UserRepository struct {
 	store *Store
-	users map[string]*model.User
+	users map[int]*model.User
 }
 
 // создание нового пользователя
@@ -20,18 +20,28 @@ func (r *UserRepository) Create(u *model.User) error {
 		return err
 	} //зашифровываем пароль и его хэш записываем в новое поле
 
-	r.users[u.Email] = u // добавляем в мапу новый? ключ и его значение
-	u.ID = len(r.users)  // сомнительно
-
+	u.ID = len(r.users) + 1 // сомнительно
+	r.users[u.ID] = u       // добавляем в мапу новый? ключ и его значение
+	
 	return nil
 }
 
-// поиск пользователя по емэйлу
-func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
-	u, ok := r.users[email] // если в пмапе по ключу есть такой пользователь, то возвращаем его
+func (r *UserRepository) Find(id int) (*model.User, error) {
+	u, ok := r.users[id] // если в пмапе по ключу есть такой пользователь, то возвращаем его
 	if !ok {
 		return nil, store.ErrRecordNotFound
 	}
 
 	return u, nil
+}
+
+// поиск пользователя по емэйлу
+func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
+	for _, u := range r.users {
+		if u.Email == email {
+			return u, nil
+		}
+	}
+
+	return nil, store.ErrRecordNotFound
 }

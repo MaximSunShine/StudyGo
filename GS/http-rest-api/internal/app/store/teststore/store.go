@@ -22,7 +22,7 @@ func (s *Store) User() store.UserRepository {
 	s.userRepository = &UserRepository{
 		store: s,
 		// создаем мапу где ключ будет емэйл, а строка таблицы будет значением в виде структуры model.User
-		users: make(map[string]*model.User),
+		users: make(map[int]*model.User),
 	}
 
 	return s.userRepository
