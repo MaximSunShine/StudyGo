@@ -25,12 +25,6 @@ func getMin() int {
 	min := colActions * colServers
 	imin := 0
 	for i, val := range data {
-		/*col := 0
-		for _, v := range val.servers {
-			if !v {
-				col++
-			}
-		}*/
 		help := data[i].colWorks * val.colRestarts
 		if min > help {
 			min = help
@@ -45,12 +39,6 @@ func getMax() int {
 	imax := 0
 	max := 0
 	for i, val := range data {
-		/*col := 0
-		for _, v := range val.servers {
-			if !v {
-				col++
-			}
-		}*/
 		help := data[i].colWorks * val.colRestarts
 		if max < help {
 			max = help
@@ -80,8 +68,6 @@ func reset(i int) {
 
 func main() {
 
-	//ss := "3 3 12\nDISABLE 1 2\nDISABLE 2 1\nDISABLE 3 3\nGETMAX\nRESET 1\nRESET 2\nDISABLE 1 2\nDISABLE 1 3\nDISABLE 2 2\nGETMAX\nRESET 3\nGETMIN"
-
 	fmt.Scanln(&colDataCenters, &colServers, &colActions)
 
 	data = make([]DataCenter, colDataCenters, colDataCenters)
@@ -96,10 +82,7 @@ func main() {
 
 	var s string
 	scanner := bufio.NewScanner(os.Stdin)
-
-	//fmt.Scanf("%s\n", &s)
 	for i := 0; i < colActions; i++ {
-
 		scanner.Scan()
 		s = scanner.Text()
 		a := strings.Split(s, " ")
