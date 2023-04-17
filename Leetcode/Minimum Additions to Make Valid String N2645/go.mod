@@ -1,0 +1,3 @@
+module Minimum_Additions_to_Make_Valid_String_N2645
+
+go 1.19
