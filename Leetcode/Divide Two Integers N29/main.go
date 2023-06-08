@@ -16,8 +16,6 @@ func getSum(num int, target int, i int) (int, int) {
 	return num, i
 }
 
-var div = 1
-
 func divide(dividend int, divisor int) int {
 	if dividend == 0 {
 		return 0
@@ -50,8 +48,14 @@ func divide(dividend int, divisor int) int {
 		return 0
 	}
 
+	if step == 2 {
+		if dividend > 2147483647 {
+			dividend = 2147483647
+		}
+	}
+
 	v, i := getSum(divisor, dividend, 1)
-	if dividend > v { //
+	if dividend-v == divisor {
 		i++
 	}
 	if step == 1 {
@@ -71,5 +75,9 @@ func main() {
 	fmt.Println(divide(-4, -4))          //1
 	fmt.Println(divide(-1000, -4))       //250
 	fmt.Println(divide(-2147483648, -1)) //2147483647
+	fmt.Println(divide(-2147483648, -4)) //536870911
 	fmt.Println(divide(-2147483648, 2))  //-1073741824
+	fmt.Println(divide(-2147483648, -2)) //1073741823
+	fmt.Println(divide(-2147483648, 4))  //-536870912
+
 }
