@@ -1,0 +1,3 @@
+module Substring_with_Concatenation_of_All_Words_N30
+
+go 1.19
