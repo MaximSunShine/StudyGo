@@ -34,12 +34,13 @@ func is(s string, a []string) bool {
 }
 func findSubstring(s string, words []string) (res []int) {
 	n, m, k := len(s), len(words), len(words[0])
+	//nmk := n - m*k
 	cnt, window_cnt := make(map[string]int, m), 0
 	for _, word := range words {
 		cnt[word]++
 	}
 	for shift := 0; shift < k; shift++ {
-		for i, j := shift, shift; j <= n; i, j = i+k, j+k {
+		for i, j := shift, shift; j <= n; /*&& i <= nmk*/ i, j = i+k, j+k {
 			for ; j+k <= n && cnt[s[j:j+k]] > 0; j += k {
 				cnt[s[j:j+k]]--
 				window_cnt++
@@ -47,6 +48,7 @@ func findSubstring(s string, words []string) (res []int) {
 			if window_cnt == m {
 				res = append(res, i)
 			}
+
 			for ; i+k <= n && (j+k > n || s[i:i+k] != s[j:j+k]); i += k {
 				cnt[s[i:i+k]]++
 				window_cnt--
@@ -80,15 +82,18 @@ func findSubstring1(s string, c []string) []int {
 	return b
 }
 func main() {
+	fmt.Println(findSubstring("abababab", []string{"ab", "ba"}))
+	fmt.Println(findSubstring("abacacbaaaacaacbc", []string{"a", "a", "c"}))
+	fmt.Println(findSubstring("aaaaaa", []string{"a"}))
+	fmt.Println(findSubstring("aaaaaaaaaaaa", []string{"aa", "aa", "aa"}))
 	fmt.Println(findSubstring("abaababbaba", []string{"ba", "ab", "ab"}))
 	fmt.Println(findSubstring("abcdef", []string{"abc", "def"}))
 	fmt.Println(findSubstring("abcdefabcdef", []string{"a", "b", "c", "d", "e", "f"}))
-	fmt.Println(findSubstring("aaaaaa", []string{"a", "a", "a"}))
+	fmt.Println(findSubstring("aaaaaaaa", []string{"a", "a", "a"}))
 	fmt.Println(findSubstring("wordgoodgoodgoodbestword", []string{"word", "good", "best", "word"}))
 	fmt.Println(findSubstring("barfoofoobarthefoobarman", []string{"bar", "foo", "the"}))
 	fmt.Println(findSubstring("", []string{""}))
 	fmt.Println(findSubstring("aaaaaa", []string{""}))
-	fmt.Println(findSubstring("aaaaaa", []string{"a"}))
 	fmt.Println(findSubstring("aaaaaa", []string{"aaaaaa"}))
 	fmt.Println(findSubstring("aaaaaa", []string{"aaaaa"}))
 
