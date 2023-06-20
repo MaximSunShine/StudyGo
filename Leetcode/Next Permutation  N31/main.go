@@ -1,8 +1,32 @@
 package main
 
 import "fmt"
-
 func nextPermutation(a []int) {
+	fmt.Println()
+	fmt.Println("start position ->", a)
+	i:= len(a)-1
+	for ; i > 0; i-- {
+		if a[i-1] < a[i] {
+			for j := len(a)-1; j>i-1; j--{
+				if a[i-1] < a[j] {
+					fmt.Print(a[i-1], " change ", a[j], "  ")
+					fmt.Println("in ->",a)
+					a[i-1], a[j] = a[j], a[i-1]
+					fmt.Println("result -> ",a)
+					break
+				}
+			}
+			break
+		}
+	}
+	fmt.Println("after first loop -> ",a)
+	l,r := i, len(a)-1
+	fmt.Println("start reverse from ",a[l]," to ",a[r])
+	for ; l<r; l,r = l+1, r-1 {
+		a[l], a[r] = a[r], a[l]
+	}
+}
+func nextPermutation1(a []int) {
 	find := false
 	for i := len(a) - 1; i >= 0; i-- {
 		if i == 0 || a[i-1] < a[i] {
