@@ -3,18 +3,32 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 )
 
 func main() {
-	in := bufio.NewReader(os.Stdin)
-	out := bufio.NewWriter(os.Stdout)
+
+	file, err := os.Open("C:/Users/Zver/Downloads/tests (1)/tests/01")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	file1, err := os.Create("C:/Users/Zver/Downloads/tests (1)/tests/01.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file1.Close()
+
+	in := bufio.NewReader(file)
+	out := bufio.NewWriter(file1)
 	defer out.Flush()
 	n, k := 0, 0
 
-	fmt.Fscan(in, &n, &k)
-
+	a, z := fmt.Fscan(in, &n, &k)
+	fmt.Fprintln(out, a, z)
 	s := ""
 	var arr [][]string
 
@@ -45,7 +59,7 @@ func main() {
 		fmt.Fprintln(out, "100.200.0.0/16")
 	} else {
 		if len(hash) > k { //------------/16
-			fmt.Fprintln(out, 65534)
+			fmt.Fprintln(out, 65536-len(arr))
 			fmt.Fprintln(out, 1)
 			fmt.Fprintln(out, "100.200.0.0/16")
 
@@ -54,7 +68,6 @@ func main() {
 			fmt.Fprintln(out, len(arr))
 
 			for i := 0; i < n; i++ {
-
 				help := "100.200." + arr[i][2] + "." + arr[i][3]
 				fmt.Fprintln(out, help)
 			}
