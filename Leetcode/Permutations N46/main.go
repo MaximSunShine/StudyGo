@@ -178,4 +178,5 @@ func main() {
 	sort.Ints(n)
 
 	fmt.Println(permute(n))
+	fmt.Println(permute([]int{5, 4, 3, 2, 1}))
 }
