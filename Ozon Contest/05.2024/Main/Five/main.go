@@ -58,6 +58,7 @@ func main() {
 	s = "[" + s + "]"
 
 	fmt.Fprintln(out, s)
+
 	sTest := "[{\"qtfffdilio\":[\"upobhn\"]},{\"drwkqrtmn\":{\"fkudd\":\"maerj\",\"nnfi\":\"uooewq\"}},{\"sgomvjfk\":[\"mpnbukihw\"]},{\"mbigieteq\":{\"hdl\":[\"nwcokit\"]}},[{\"bviaflrkh\":\"meohj\",\"ygsbw\":\"fjj\"}],{\"kavykcjixy\":\"y\"},[{\"jgqshnndx\":\"na\"}],[{\"geoyts\":\"blksv\"}],{\"fh\":{\"uxhdn\":{\"jgtsnuoo\":[\"bdk\"]}}},[\"j\",\"mknnqxsqoc\"]]\n"
 	fmt.Fprintln(out)
 	fmt.Fprintln(out, sTest)
